@@ -1,0 +1,42 @@
+name: Deploy MoonBit Playground to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'MoonBit/**'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload MoonBit Web Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # MoonBit/web のみを公開対象とし、他ディレクトリ (Blender-scripts, Unity-ML等) を完全に除外
+          path: 'MoonBit/web'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

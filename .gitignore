@@ -1,0 +1,15 @@
+# OS & Editors
+.DS_Store
+Thumbs.db
+*.tmp
+.vscode/
+.idea/
+
+# MoonBit build outputs
+_build/
+target/
+.mooncakes/
+.moonagent/
+
+# Node.js
+node_modules/

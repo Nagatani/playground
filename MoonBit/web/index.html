@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoonBit WASM 実践学習ポータル</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="logo-badge">M</div>
+        <div>
+          <div class="brand-title">MoonBit × WebAssembly 実践学習ポータル</div>
+          <div class="brand-subtitle">Interactive WASM Learning Playground</div>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span class="tag">MoonBit v0.1</span>
+        <span class="tag">WASM 32-bit</span>
+        <span class="tag">Linear Memory</span>
+        <span class="tag">Zero-Copy</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="tabs-nav">
+    <button class="tab-btn active" data-tab="overview">🔰 はじめに & 環境構築</button>
+    <button class="tab-btn" data-tab="step1">🔢 Step 1: 数値計算 & 速度比較</button>
+    <button class="tab-btn" data-tab="step2">🔤 Step 2: 文字列 & 共有メモリ</button>
+    <button class="tab-btn" data-tab="step3">🎨 Step 3: Canvas 高速描画</button>
+    <button class="tab-btn" data-tab="step4">🔌 Step 4: JavaScript FFI</button>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="main-content">
+
+    <!-- TAB: OVERVIEW -->
+    <section id="overview" class="tab-pane active">
+      <div class="card-grid">
+        <div class="card full-width">
+          <h2 class="card-title">🚀 MoonBit とは？ なぜ WebAssembly で注目されるのか？</h2>
+          <p class="card-desc">
+            MoonBit（ムーンビット）は、<strong>WebAssembly（WASM）ファースト</strong>でゼロから設計された次世代の静的型付けプログラミング言語です。<br>
+            Rust や Go、C++ など従来の言語と比べ、コンパイル速度が極めて高速で、生成される WASM バイナリが<strong>数キロバイト〜数十キロバイトと圧倒的にコンパクト</strong>であることが大きな特徴です。
+          </p>
+
+          <div class="card-grid" style="margin-top: 20px;">
+            <div style="background: #0d1527; padding: 18px; border-radius: 8px; border: 1px solid #1e293b;">
+              <h3 style="color: var(--accent-cyan); font-size: 15px; margin-bottom: 8px;">⚡ 1. 超小型・超高速</h3>
+              <p style="font-size: 13px; color: var(--text-muted);">
+                従来の言語ではランタイムの肥大化により数MBになることも珍しくありませんが、MoonBit は不要なコードを徹底的に削ぎ落とし、わずか数百バイトから動作可能です。
+              </p>
+            </div>
+            <div style="background: #0d1527; padding: 18px; border-radius: 8px; border: 1px solid #1e293b;">
+              <h3 style="color: var(--accent-purple); font-size: 15px; margin-bottom: 8px;">🛡️ 2. 型安全と強力な型推論</h3>
+              <p style="font-size: 13px; color: var(--text-muted);">
+                Rust や OCaml にインスパイアされた表現力豊かな型システム、パターンマッチング、イミュータブル（不変）デフォルトの設計を持ち、バグを未然に防ぎます。
+              </p>
+            </div>
+            <div style="background: #0d1527; padding: 18px; border-radius: 8px; border: 1px solid #1e293b;">
+              <h3 style="color: var(--accent-green); font-size: 15px; margin-bottom: 8px;">🌐 3. Web & JS との親和性</h3>
+              <p style="font-size: 13px; color: var(--text-muted);">
+                標準の WASM (Linear Memory) に加え、ブラウザの GC を活用する <code>wasm-gc</code> や JavaScript への直接トランスパイルにも対応しています。
+              </p>
+            </div>
+            <div style="background: #0d1527; padding: 18px; border-radius: 8px; border: 1px solid #1e293b;">
+              <h3 style="color: var(--accent-amber); font-size: 15px; margin-bottom: 8px;">🛠️ 4. 充実した公式ツールチェーン</h3>
+              <p style="font-size: 13px; color: var(--text-muted);">
+                ビルドシステム、パッケージマネージャ、フォーマッタ、LSP（言語サーバー）が最初から統合されており、<code>moon</code> コマンドだけで完結します。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 環境構築ガイド -->
+        <div class="card">
+          <h2 class="card-title">💻 環境構築手順 (Windows / PowerShell)</h2>
+          <p class="card-desc">MoonBit のツールチェーンは公式サイトのスクリプトで簡単に導入できます。</p>
+
+          <pre><code><span class="code-comment"># 1. PowerShellでMoonBit CLIをインストール</span>
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+irm https://cli.moonbitlang.com/install/powershell.ps1 | iex
+
+<span class="code-comment"># 2. バージョン確認</span>
+moon version
+
+<span class="code-comment"># 3. VS Code 拡張機能の導入 (推奨)</span>
+<span class="code-comment"># マーケットプレイスで「MoonBit」を検索してインストール</span></code></pre>
+
+          <div class="callout tip">
+            <strong>💡 ヒント:</strong> VS Code の拡張機能を入れると、構文ハイライト・コード補完・型ホバー・自動フォーマットが即座に有効になります。
+          </div>
+        </div>
+
+        <!-- 基本プロジェクト操作 -->
+        <div class="card">
+          <h2 class="card-title">📁 プロジェクト操作とWASMビルド</h2>
+          <p class="card-desc">MoonBit CLI (<code>moon</code>) による開発の流れです。</p>
+
+          <pre><code><span class="code-comment"># 新規モジュールの作成</span>
+moon new my_project
+
+<span class="code-comment"># コードの型チェック</span>
+moon check
+
+<span class="code-comment"># WebAssembly向けにビルド</span>
+moon build --target wasm
+
+<span class="code-comment"># テストの実行</span>
+moon test</code></pre>
+
+          <div class="callout">
+            <strong>📂 本リポジトリの構成:</strong>
+            <code>src/step1_math/</code>, <code>src/step2_string/</code>, <code>src/step3_canvas/</code>, <code>src/step4_ffi/</code> の各フォルダに実践コードが配置されています。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: STEP 1 (MATH & BENCHMARK) -->
+    <section id="step1" class="tab-pane">
+      <div class="card-grid">
+        <div class="card">
+          <h2 class="card-title">🔢 インタラクティブ実行 & パフォーマンス対決</h2>
+          <p class="card-desc">MoonBit でコンパイルされた WASM 関数を直接ブラウザで呼び出します。</p>
+
+          <div class="form-group">
+            <label>足し算 (add)</label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="number" id="math-a" value="42" style="width: 100px;">
+              <span>+</span>
+              <input type="number" id="math-b" value="58" style="width: 100px;">
+              <button class="btn btn-cyan" onclick="runMathDemo()">計算</button>
+            </div>
+            <div class="result-box">
+              <div class="result-label">WASM 実行結果</div>
+              <div class="result-value" id="math-add-res">42 + 58 = 100</div>
+            </div>
+          </div>
+
+          <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
+
+          <div class="form-group">
+            <label>素数判定 (is_prime) & コラッツ予想 (collatz)</label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="number" id="math-prime-input" value="997" style="width: 120px;">
+              <button class="btn btn-secondary" onclick="runMathDemo()">判定</button>
+            </div>
+            <div class="result-box">
+              <div class="result-value" id="math-prime-res">997 は素数です！</div>
+            </div>
+
+            <div style="display: flex; gap: 8px; align-items: center; margin-top: 12px;">
+              <input type="number" id="math-collatz-input" value="27" style="width: 120px;">
+              <button class="btn btn-secondary" onclick="runMathDemo()">ステップ数計算</button>
+            </div>
+            <div class="result-box">
+              <div class="result-value" id="math-collatz-res">27 が 1 に達するまでのステップ数: 111</div>
+            </div>
+          </div>
+
+          <!-- Benchmark Section -->
+          <div class="bench-container">
+            <h3 style="font-size: 15px; margin-bottom: 8px; color: var(--accent-amber);">⚡ CPU負荷ベンチマーク: フィボナッチ再帰</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">
+              計算量の多い <code>fib(n)</code> (O(2^n)の再帰) を MoonBit WASM と JavaScript の両方で実行し、純粋な実行速度を比較します。
+            </p>
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 14px;">
+              <label style="margin: 0;">N =</label>
+              <input type="number" id="bench-n" value="38" min="20" max="42" style="width: 90px;">
+              <button class="btn btn-cyan" id="bench-btn" onclick="runBenchmark()">ベンチマーク実行</button>
+            </div>
+
+            <div class="bench-row">
+              <div class="bench-header">
+                <span>🦀 MoonBit WASM</span>
+                <span id="bench-wasm-val" style="color: var(--accent-cyan); font-weight: bold;">-- ms</span>
+              </div>
+              <div class="bench-bar-bg">
+                <div class="bench-bar-fill bench-bar-wasm" id="bench-wasm-bar"></div>
+              </div>
+            </div>
+
+            <div class="bench-row">
+              <div class="bench-header">
+                <span>🟡 JavaScript (V8 Engine)</span>
+                <span id="bench-js-val" style="color: var(--accent-amber); font-weight: bold;">-- ms</span>
+              </div>
+              <div class="bench-bar-bg">
+                <div class="bench-bar-fill bench-bar-js" id="bench-js-bar"></div>
+              </div>
+            </div>
+
+            <div id="bench-summary" style="margin-top: 12px; font-size: 13px; font-weight: 600;"></div>
+          </div>
+        </div>
+
+        <!-- Code & Explanation -->
+        <div class="card">
+          <h2 class="card-title">📖 解説 & ソースコード (Step 1)</h2>
+          <p class="card-desc">
+            MoonBit では、WASM 向けに関数を公開する際に <code>#export_name("...")</code> アトリビュートを付与します。<br>
+            パッケージ設定 <code>moon.pkg</code> に <code>pkgtype(kind: "foreign_library")</code> を指定することで、余分なエントリポイントのないクリーンな共有ライブラリが出力されます。
+          </p>
+
+          <h3 style="font-size: 13px; color: var(--text-dim); margin-bottom: 4px;">MoonBit ソースコード (src/step1_math/math.mbt)</h3>
+          <pre><code><span class="code-comment">/// 2つの整数の加算</span>
+<span class="code-attr">#export_name("add")</span>
+<span class="code-keyword">pub fn</span> <span class="code-func">add</span>(a : <span class="code-type">Int</span>, b : <span class="code-type">Int</span>) -&gt; <span class="code-type">Int</span> {
+  a + b
+}
+
+<span class="code-comment">/// 再帰によるフィボナッチ計算</span>
+<span class="code-attr">#export_name("fib")</span>
+<span class="code-keyword">pub fn</span> <span class="code-func">fib</span>(n : <span class="code-type">Int</span>) -&gt; <span class="code-type">Int</span> {
+  <span class="code-keyword">if</span> n &lt;= 1 {
+    n
+  } <span class="code-keyword">else</span> {
+    fib(n - 1) + fib(n - 2)
+  }
+}</code></pre>
+
+          <h3 style="font-size: 13px; color: var(--text-dim); margin: 14px 0 4px;">JavaScript 側からの呼び出し (app.js)</h3>
+          <pre><code><span class="code-comment">// 1. WASMファイルをフェッチしてインスタンス化</span>
+<span class="code-keyword">const</span> response = <span class="code-keyword">await</span> fetch(<span class="code-string">'/wasm/step1_math.wasm'</span>);
+<span class="code-keyword">const</span> bytes = <span class="code-keyword">await</span> response.arrayBuffer();
+<span class="code-keyword">const</span> { instance } = <span class="code-keyword">await</span> WebAssembly.instantiate(bytes);
+
+<span class="code-comment">// 2. エクスポートされた関数を通常のJS関数と同様に実行</span>
+<span class="code-keyword">const</span> sum = instance.exports.add(42, 58); <span class="code-comment">// =&gt; 100</span>
+<span class="code-keyword">const</span> fibVal = instance.exports.fib(10);   <span class="code-comment">// =&gt; 55</span></code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: STEP 2 (STRING & MEMORY) -->
+    <section id="step2" class="tab-pane">
+      <div class="card-grid">
+        <div class="card">
+          <h2 class="card-title">🔤 文字列変換 & 共有メモリインスペクタ</h2>
+          <p class="card-desc">
+            WebAssembly の仕様上、直接文字列オブジェクトを引数や戻り値にすることはできません。<br>
+            JS側で文字列を UTF-8 バイト列にエンコードして WASM の<strong>線形メモリ (Linear Memory)</strong> に書き込み、WASM 側で処理した結果を読み取ります。
+          </p>
+
+          <div class="form-group">
+            <label>入力文字列 (Input Text)</label>
+            <input type="text" id="str-input" value="Hello MoonBit! WebAssembly is ultra fast.">
+          </div>
+
+          <div class="btn-group">
+            <button class="btn btn-cyan" onclick="runStringTransform('upper')">🔠 大文字化 (to_upper)</button>
+            <button class="btn btn-secondary" onclick="runStringTransform('reverse')">🔄 文字反転 (reverse)</button>
+            <button class="btn btn-secondary" onclick="runStringTransform('rot13')">🔒 暗号化 (ROT13)</button>
+            <button class="btn btn-secondary" onclick="runStringTransform('count')">📊 単語数カウント</button>
+          </div>
+
+          <div class="result-box">
+            <div class="result-label">MoonBit WASM 出力バッファの内容</div>
+            <div class="result-value" id="str-output">HELLO MOONBIT! WEBASSEMBLY IS ULTRA FAST.</div>
+          </div>
+
+          <div style="margin-top: 20px;">
+            <label>🔍 WASM 共有メモリのリアルタイム Hex/ASCII ダンプ</label>
+            <div class="memory-dump" id="memory-dump"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">📖 解説: 共有メモリ (Linear Memory) とポインタ</h2>
+          <p class="card-desc">
+            MoonBit で <code>options(link: { "wasm": { "export-memory-name": "memory" } })</code> を指定すると、WASM の線形メモリがエクスポートされます。
+          </p>
+
+          <div class="callout tip">
+            <strong>📌 ポインタの正体:</strong>
+            WASM におけるポインタは、線形メモリの先頭からの<strong>バイトオフセット（Int値）</strong>に過ぎません。
+            MoonBit の組み込み関数 <code>%identity</code> を使うことで、固定長配列 <code>FixedArray[Byte]</code> のメモリアドレスを直接数値として取り出せます。
+          </div>
+
+          <h3 style="font-size: 13px; color: var(--text-dim); margin-bottom: 4px;">MoonBit ソースコード (src/step2_string/string.mbt)</h3>
+          <pre><code><span class="code-comment">// 配列のメモリポインタを取得する内部関数</span>
+<span class="code-keyword">fn</span> <span class="code-func">to_ptr</span>(arr : <span class="code-type">FixedArray[Byte]</span>) -&gt; <span class="code-type">Int</span> = <span class="code-string">"%identity"</span>
+
+<span class="code-keyword">let</span> in_buf : <span class="code-type">FixedArray[Byte]</span> = FixedArray::make(4096, b<span class="code-string">"\x00"</span>[0])
+<span class="code-keyword">let</span> out_buf : <span class="code-type">FixedArray[Byte]</span> = FixedArray::make(4096, b<span class="code-string">"\x00"</span>[0])
+
+<span class="code-attr">#export_name("get_in_buf_ptr")</span>
+<span class="code-keyword">pub fn</span> <span class="code-func">get_in_buf_ptr</span>() -&gt; <span class="code-type">Int</span> { to_ptr(in_buf) }
+
+<span class="code-attr">#export_name("to_upper")</span>
+<span class="code-keyword">pub fn</span> <span class="code-func">to_upper</span>(len : <span class="code-type">Int</span>) -&gt; <span class="code-type">Int</span> {
+  <span class="code-keyword">for</span> i = 0; i &lt; len; i = i + 1 {
+    <span class="code-keyword">let</span> b = in_buf[i].to_int()
+    <span class="code-keyword">let</span> upper = <span class="code-keyword">if</span> b &gt;= 97 &amp;&amp; b &lt;= 122 { b - 32 } <span class="code-keyword">else</span> { b }
+    out_buf[i] = upper.to_byte()
+  }
+  len
+}</code></pre>
+
+          <h3 style="font-size: 13px; color: var(--text-dim); margin: 14px 0 4px;">JavaScript 側 (TextEncoder / Uint8Array)</h3>
+          <pre><code><span class="code-comment">// 1. 入力バッファへUTF-8で書き込み</span>
+<span class="code-keyword">const</span> encoded = <span class="code-keyword">new</span> TextEncoder().encode(text);
+<span class="code-keyword">new</span> Uint8Array(memory.buffer, inPtr, encoded.length).set(encoded);
+
+<span class="code-comment">// 2. WASM関数実行</span>
+<span class="code-keyword">const</span> outLen = wasm.to_upper(encoded.length);
+
+<span class="code-comment">// 3. 出力バッファからUTF-8デコードして取得</span>
+<span class="code-keyword">const</span> outBytes = <span class="code-keyword">new</span> Uint8Array(memory.buffer, outPtr, outLen);
+<span class="code-keyword">const</span> result = <span class="code-keyword">new</span> TextDecoder().decode(outBytes);</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: STEP 3 (CANVAS GRAPHICS) -->
+    <section id="step3" class="tab-pane">
+      <div class="card-grid">
+        <div class="card">
+          <h2 class="card-title">🎨 Canvas 高速ゼロコピー描画</h2>
+          <p class="card-desc">
+            MoonBit 内で 256×256 の RGBA ピクセル配列を直接操作し、JavaScript 側では <code>ImageData</code> としてコピーなしで一瞬で描画します。
+          </p>
+
+          <!-- Fractal Controls -->
+          <div style="background: #0d1527; padding: 14px; border-radius: 8px; margin-bottom: 16px;">
+            <h3 style="font-size: 14px; color: var(--accent-cyan); margin-bottom: 8px;">1. マンデルブロ集合フラクタル</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div>
+                <label>ズーム倍率: <span id="frac-zoom-label">1.0x</span></label>
+                <input type="range" id="frac-zoom" min="0.5" max="30.0" step="0.5" value="1.0" oninput="renderFractal()" style="width: 100%;">
+              </div>
+              <div>
+                <label>最大反復回数 (精度)</label>
+                <input type="number" id="frac-iter" min="16" max="256" value="64" onchange="renderFractal()">
+              </div>
+              <div>
+                <label>中心 X</label>
+                <input type="number" id="frac-cx" step="0.05" value="-0.7" onchange="renderFractal()">
+              </div>
+              <div>
+                <label>中心 Y</label>
+                <input type="number" id="frac-cy" step="0.05" value="0.0" onchange="renderFractal()">
+              </div>
+            </div>
+          </div>
+
+          <div class="canvas-wrapper">
+            <canvas id="fractal-canvas" width="256" height="256" style="width: 256px; height: 256px;"></canvas>
+            <div class="canvas-stats">
+              <span>解像度: <strong>256 × 256 (65,536 px)</strong></span>
+              <span>描画時間: <strong id="frac-time">-- ms</strong></span>
+            </div>
+          </div>
+
+          <!-- LifeGame Controls -->
+          <div style="background: #0d1527; padding: 14px; border-radius: 8px; margin-top: 20px;">
+            <h3 style="font-size: 14px; color: var(--accent-green); margin-bottom: 8px;">2. コンウェイのライフゲーム (Game of Life)</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+              キャンバスをクリックしてセルを直接配置/反転できます。
+            </p>
+            <div class="btn-group">
+              <button class="btn btn-green" id="life-run-btn" onclick="toggleLifeRunning()">開始 (Start)</button>
+              <button class="btn btn-secondary" onclick="stepLifeOnce()">1ステップ進める</button>
+              <button class="btn btn-secondary" onclick="initLifeGame('random')">ランダム再生成</button>
+            </div>
+            <div class="canvas-wrapper">
+              <canvas id="life-canvas" width="256" height="256" style="width: 256px; height: 256px;"></canvas>
+              <div class="canvas-stats">
+                <span>シミュレーション速度: <strong id="life-fps">-- FPS</strong></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">📖 解説: ゼロコピー描画のアーキテクチャ</h2>
+          <p class="card-desc">
+            Webブラウザでピクセル単位の描画を行う場合、JavaScript で1ピクセルずつ <code>fillRect</code> を呼ぶと膨大なオーバーヘッドが生じます。<br>
+            WASMのメモリバッファを直接 <code>Uint8ClampedArray</code> として参照し、<code>ctx.putImageData</code> に渡すことで、<strong>GPU転送直前までメモリコピーが一切発生しない超高速描画</strong>が実現します。
+          </p>
+
+          <div class="callout">
+            <strong>🎨 メモリレイアウト:</strong><br>
+            1ピクセルは [R, G, B, A] の連続した4バイト。<br>
+            256 × 256 × 4 = 262,144 バイト (256 KB) を MoonBit 側のバッファで確保しています。
+          </div>
+
+          <h3 style="font-size: 13px; color: var(--text-dim); margin-bottom: 4px;">MoonBit 側 (src/step3_canvas/canvas.mbt)</h3>
+          <pre><code><span class="code-keyword">let</span> pixel_buf : <span class="code-type">FixedArray[Byte]</span> = FixedArray::make(256 * 256 * 4, b<span class="code-string">"\x00"</span>[0])
+
+<span class="code-attr">#export_name("get_pixel_buf_ptr")</span>
+<span class="code-keyword">pub fn</span> <span class="code-func">get_pixel_buf_ptr</span>() -&gt; <span class="code-type">Int</span> { to_ptr(pixel_buf) }
+
+<span class="code-attr">#export_name("render_mandelbrot")</span>
+<span class="code-keyword">pub fn</span> <span class="code-func">render_mandelbrot</span>(...) -&gt; <span class="code-type">Unit</span> {
+  <span class="code-comment">// 複素数反復計算を行い、pixel_buf[offset + 0..3] に直接色を格納</span>
+  pixel_buf[offset + 0] = r.to_byte()
+  pixel_buf[offset + 1] = g.to_byte()
+  pixel_buf[offset + 2] = b.to_byte()
+  pixel_buf[offset + 3] = b<span class="code-string">"\xff"</span>[0]
+}</code></pre>
+
+          <h3 style="font-size: 13px; color: var(--text-dim); margin: 14px 0 4px;">JavaScript 側 (ゼロコピー描画)</h3>
+          <pre><code><span class="code-comment">// WASMメモリバッファの上に直接TypedArrayのViewを作成 (コピーなし!)</span>
+<span class="code-keyword">const</span> ptr = wasm.get_pixel_buf_ptr();
+<span class="code-keyword">const</span> clamped = <span class="code-keyword">new</span> Uint8ClampedArray(wasm.memory.buffer, ptr, 256 * 256 * 4);
+<span class="code-keyword">const</span> imgData = <span class="code-keyword">new</span> ImageData(clamped, 256, 256);
+
+<span class="code-comment">// Canvasへ一括転送</span>
+ctx.putImageData(imgData, 0, 0);</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: STEP 4 (FFI) -->
+    <section id="step4" class="tab-pane">
+      <div class="card-grid">
+        <div class="card">
+          <h2 class="card-title">🔌 JavaScript FFI (外部関数のインポート)</h2>
+          <p class="card-desc">
+            MoonBit はスタンドアロンで動くだけでなく、<strong>ホスト環境 (JavaScript) の関数をインポートして直接呼び出す</strong>ことができます。<br>
+            ログ出力や現在時刻取得、DOM操作、非同期通知などを MoonBit 内部からトリガーできます。
+          </p>
+
+          <div class="form-group">
+            <label>計算回数 N (5の倍数ごとにJSへコールバック)</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="number" id="ffi-input-n" value="25" min="5" max="100" style="width: 100px;">
+              <button class="btn btn-cyan" onclick="triggerFfiDemo()">FFI 計算開始</button>
+              <button class="btn btn-secondary" onclick="triggerFfiGreeting()">挨拶メッセージ送信</button>
+              <button class="btn btn-secondary" onclick="clearLog()">ログ消去</button>
+            </div>
+            <div class="result-box" style="margin-top: 12px;">
+              <div class="result-value" id="ffi-sum-res">合計: --</div>
+            </div>
+          </div>
+
+          <label>🖥️ Host (JavaScript) 側イベントログコンソール</label>
+          <div class="terminal" id="ffi-terminal"></div>
+        </div>
+
+        <div class="card">
+          <h2 class="card-title">📖 解説: 外部関数の宣言と ImportObject</h2>
+          <p class="card-desc">
+            MoonBit では、外部シンボルを <code>fn name(args) -&gt; Ret = "module_name" "function_name"</code> の構文で宣言します。
+          </p>
+
+          <h3 style="font-size: 13px; color: var(--text-dim); margin-bottom: 4px;">MoonBit ソースコード (src/step4_ffi/ffi.mbt)</h3>
+          <pre><code><span class="code-comment">// 外部JS関数のインポート宣言 ("env" モジュールから供給)</span>
+<span class="code-keyword">fn</span> <span class="code-func">js_log_number</span>(tag : <span class="code-type">Int</span>, val : <span class="code-type">Int</span>) -&gt; <span class="code-type">Unit</span> = <span class="code-string">"env"</span> <span class="code-string">"js_log_number"</span>
+<span class="code-keyword">fn</span> <span class="code-func">js_get_time</span>() -&gt; <span class="code-type">Double</span> = <span class="code-string">"env"</span> <span class="code-string">"js_get_time"</span>
+
+<span class="code-attr">#export_name("run_ffi_calc")</span>
+<span class="code-keyword">pub fn</span> <span class="code-func">run_ffi_calc</span>(n : <span class="code-type">Int</span>) -&gt; <span class="code-type">Int</span> {
+  <span class="code-keyword">let</span> start = js_get_time() <span class="code-comment">// JS側の現在時刻を取得</span>
+  <span class="code-keyword">let mut</span> sum = 0
+  <span class="code-keyword">for</span> i = 1; i &lt;= n; i = i + 1 {
+    sum = sum + i
+    <span class="code-keyword">if</span> i % 5 == 0 {
+      js_log_number(2, sum) <span class="code-comment">// JS側ログ関数を呼び出し</span>
+    }
+  }
+  sum
+}</code></pre>
+
+          <h3 style="font-size: 13px; color: var(--text-dim); margin: 14px 0 4px;">JavaScript 側での関数注入 (Import Object)</h3>
+          <pre><code><span class="code-keyword">const</span> importObject = {
+  env: {
+    js_log_number: (tag, val) =&gt; {
+      console.log(`[Tag ${tag}] Value: ${val}`);
+    },
+    js_get_time: () =&gt; performance.now()
+  }
+};
+
+<span class="code-comment">// インスタンス化時に関数を渡す</span>
+<span class="code-keyword">const</span> { instance } = <span class="code-keyword">await</span> WebAssembly.instantiate(bytes, importObject);</code></pre>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
