@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nagatani's Playground - プロジェクト一覧</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-card-hover: #182238;
+      --border-color: #23304b;
+      --border-hover: #3b82f6;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-cyan: #06b6d4;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(180deg, rgba(19, 27, 46, 0.8) 0%, rgba(11, 15, 25, 0.4) 100%);
+      border-bottom: 1px solid var(--border-color);
+      padding: 48px 24px 40px;
+      text-align: center;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      color: var(--accent-cyan);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, #fff 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 640px;
+      margin: 0 auto 20px;
+    }
+
+    .github-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 6px 14px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+    }
+
+    .github-link:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+      border-color: #475569;
+    }
+
+    main {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #e2e8f0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .card-icon {
+      font-size: 32px;
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .status-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .status-badge.live {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-badge.repo {
+      background: rgba(148, 163, 184, 0.12);
+      color: #cbd5e1;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-arrow {
+      color: var(--text-muted);
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    .card:hover .card-arrow {
+      color: var(--accent-cyan);
+      transform: translateX(4px);
+    }
+
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      flex: 1;
+    }
+
+    .tag-list {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 11.5px;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      color: #94a3b8;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .card.placeholder {
+      border-style: dashed;
+      background: rgba(19, 27, 46, 0.4);
+      cursor: default;
+    }
+    .card.placeholder:hover {
+      transform: none;
+      border-color: var(--border-color);
+      box-shadow: none;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 24px;
+      text-align: center;
+      font-size: 13px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-badge">🚀 Playground Hub</div>
+    <h1>Nagatani's Playground</h1>
+    <p class="subtitle">様々なプログラミング言語・ツール・技術の実験的プロジェクトや検証コードを公開しています。</p>
+    <a href="https://github.com/Nagatani/playground" target="_blank" rel="noopener" class="github-link">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      GitHub Repository: Nagatani/playground
+    </a>
+  </header>
+
+  <main>
+    <div class="section-title">📂 プロジェクト・リンク集</div>
+
+    <div class="grid">
+      <!-- 1. MoonBit WASM -->
+      <a href="./moonbit/" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">🌙</div>
+          <span class="status-badge live">● Web公開中</span>
+        </div>
+        <div class="card-title">
+          <span>MoonBit × WebAssembly</span>
+          <span class="card-arrow">→</span>
+        </div>
+        <div class="card-desc">
+          WebAssemblyファーストの新世代言語 MoonBit の実践学習ポータル。数値計算ベンチマーク（WASM vs JS）、線形共有メモリ、Canvasゼロコピー描画（フラクタル/ライフゲーム）、JavaScript FFI をブラウザで直接体験できます。
+        </div>
+        <div class="tag-list">
+          <span class="tag">MoonBit</span>
+          <span class="tag">WASM</span>
+          <span class="tag">Canvas</span>
+          <span class="tag">Interactive</span>
+        </div>
+      </a>
+
+      <!-- 2. Unity ML - Othello -->
+      <a href="https://github.com/Nagatani/playground/tree/main/Unity-ML/Othello" target="_blank" rel="noopener" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(139, 92, 246, 0.15); color: #a78bfa;">🎮</div>
+          <span class="status-badge repo">📦 GitHub Code</span>
+        </div>
+        <div class="card-title">
+          <span>Unity ML - Othello AI</span>
+          <span class="card-arrow">↗</span>
+        </div>
+        <div class="card-desc">
+          Unity エンジンと機械学習（強化学習 / ML-Agents）を活用したオセロ（リバーシ）AI のシミュレーションおよび学習プロジェクトです。
+        </div>
+        <div class="tag-list">
+          <span class="tag">Unity</span>
+          <span class="tag">C#</span>
+          <span class="tag">Machine Learning</span>
+          <span class="tag">Othello</span>
+        </div>
+      </a>
+
+      <!-- 3. Blender Scripts -->
+      <a href="https://github.com/Nagatani/playground/tree/main/Blender-scripts" target="_blank" rel="noopener" class="card">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">🎨</div>
+          <span class="status-badge repo">📦 GitHub Code</span>
+        </div>
+        <div class="card-title">
+          <span>Blender Python Scripts</span>
+          <span class="card-arrow">↗</span>
+        </div>
+        <div class="card-desc">
+          Blender の Python API (bpy) を活用し、3Dキャラクターの自動モデリングや形状生成を行う自動化スクリプト集です。
+        </div>
+        <div class="tag-list">
+          <span class="tag">Python</span>
+          <span class="tag">Blender 3D</span>
+          <span class="tag">Automation</span>
+        </div>
+      </a>
+
+      <!-- 4. Next Project Placeholder -->
+      <div class="card placeholder">
+        <div class="card-top">
+          <div class="card-icon">💡</div>
+          <span class="status-badge repo">Coming Soon</span>
+        </div>
+        <div class="card-title" style="color: var(--text-muted);">
+          <span>New Experiment</span>
+        </div>
+        <div class="card-desc">
+          新しいプログラミング言語やライブラリ、Web技術の実験プロジェクトが追加予定です。
+        </div>
+        <div class="tag-list">
+          <span class="tag">Future Work</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; Nagatani &bull; Hosted on GitHub Pages
+  </footer>
+
+</body>
+</html>

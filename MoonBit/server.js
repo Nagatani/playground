@@ -1,4 +1,4 @@
-// Lightweight HTTP server for MoonBit WASM Playground
+// Lightweight HTTP server for MoonBit WASM Playground & Portal
 // Uses only Node.js standard modules (no npm dependencies needed)
 
 const http = require('http');
@@ -6,7 +6,9 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = parseInt(process.env.PORT || '8080', 10);
-const WEB_ROOT = path.join(__dirname, 'web');
+const REPO_ROOT = path.resolve(__dirname, '..');
+const MOONBIT_WEB = path.join(__dirname, 'web');
+const PORTAL_ROOT = path.join(REPO_ROOT, 'portal');
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -23,30 +25,23 @@ const server = http.createServer((req, res) => {
   const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
   let pathname = parsedUrl.pathname;
 
-  // Root redirect to /moonbit/
-  if (pathname === '/') {
-    res.writeHead(302, { 'Location': '/moonbit/' });
-    res.end();
-    return;
-  }
+  let filePath = '';
 
-  // Support both /moonbit/... and direct /...
-  let relativePath = pathname;
-  if (pathname === '/moonbit' || pathname === '/moonbit/') {
-    relativePath = '/index.html';
+  if (pathname === '/' || pathname === '/index.html') {
+    // Top-level portal page
+    filePath = path.join(PORTAL_ROOT, 'index.html');
+  } else if (pathname === '/moonbit' || pathname === '/moonbit/') {
+    // MoonBit app top
+    filePath = path.join(MOONBIT_WEB, 'index.html');
   } else if (pathname.startsWith('/moonbit/')) {
-    relativePath = pathname.slice('/moonbit'.length);
-  }
-
-  // Sanitize path to prevent directory traversal
-  const safePath = path.normalize(relativePath).replace(/^(\.\.[\/\\])+/, '');
-  const filePath = path.join(WEB_ROOT, safePath);
-
-  // Security check: ensure path is within WEB_ROOT
-  if (!filePath.startsWith(WEB_ROOT)) {
-    res.writeHead(403, { 'Content-Type': 'text/plain' });
-    res.end('403 Forbidden');
-    return;
+    // MoonBit assets
+    const sub = pathname.slice('/moonbit'.length);
+    const safePath = path.normalize(sub).replace(/^(\.\.[\/\\])+/, '');
+    filePath = path.join(MOONBIT_WEB, safePath);
+  } else {
+    // Other root assets (if any)
+    const safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
+    filePath = path.join(PORTAL_ROOT, safePath);
   }
 
   fs.stat(filePath, (err, stats) => {
@@ -73,9 +68,10 @@ const server = http.createServer((req, res) => {
 
 server.listen(PORT, () => {
   console.log(`\x1b[32m=====================================================\x1b[0m`);
-  console.log(`\x1b[36m   MoonBit WASM Interactive Playground is Running!   \x1b[0m`);
+  console.log(`\x1b[36m   Playground Portal & MoonBit Server is Running!    \x1b[0m`);
   console.log(`\x1b[32m=====================================================\x1b[0m`);
-  console.log(`\n  Local URL: \x1b[1m\x1b[33mhttp://localhost:${PORT}/moonbit/\x1b[0m\n`);
+  console.log(`\n  Portal URL:  \x1b[1m\x1b[33mhttp://localhost:${PORT}/\x1b[0m`);
+  console.log(`  MoonBit URL: \x1b[1m\x1b[33mhttp://localhost:${PORT}/moonbit/\x1b[0m\n`);
   console.log(`  Press Ctrl+C to stop the server.\n`);
 });
 
