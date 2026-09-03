@@ -22,20 +22,73 @@ jobs:
   deploy:
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.deployment.outputs.page_url }}moonbit/
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Prepare Pages directory structure
+        run: |
+          # Create _site directory with /moonbit subpath
+          mkdir -p _site/moonbit
+          
+          # Copy MoonBit web files only to /moonbit/
+          cp -r MoonBit/web/* _site/moonbit/
+          
+          # Create a portal landing page at root (/index.html) with auto-redirect to /moonbit/
+          cat << 'EOF' > _site/index.html
+          <!DOCTYPE html>
+          <html lang="ja">
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="refresh" content="0; url=./moonbit/">
+            <title>Nagatani's Playground</title>
+            <script>window.location.replace('./moonbit/');</script>
+            <style>
+              body {
+                background: #0b0f19;
+                color: #f1f5f9;
+                font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                margin: 0;
+                text-align: center;
+              }
+              a {
+                color: #06b6d4;
+                text-decoration: none;
+                font-size: 1.1rem;
+                border: 1px solid #06b6d4;
+                padding: 10px 20px;
+                border-radius: 8px;
+                display: inline-block;
+                margin-top: 20px;
+              }
+              a:hover {
+                background: rgba(6, 182, 212, 0.1);
+              }
+            </style>
+          </head>
+          <body>
+            <h1>Nagatani's Playground</h1>
+            <p>MoonBit WASM プレイグラウンドへ自動的に移動しています...</p>
+            <p><a href="./moonbit/">自動で移動しない場合はこちらをクリック</a></p>
+          </body>
+          </html>
+          EOF
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload MoonBit Web Artifact
+      - name: Upload Pages Artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # MoonBit/web のみを公開対象とし、他ディレクトリ (Blender-scripts, Unity-ML等) を完全に除外
-          path: 'MoonBit/web'
+          path: '_site'
 
       - name: Deploy to GitHub Pages
         id: deployment

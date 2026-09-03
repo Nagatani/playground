@@ -23,12 +23,23 @@ const server = http.createServer((req, res) => {
   const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
   let pathname = parsedUrl.pathname;
 
+  // Root redirect to /moonbit/
   if (pathname === '/') {
-    pathname = '/index.html';
+    res.writeHead(302, { 'Location': '/moonbit/' });
+    res.end();
+    return;
+  }
+
+  // Support both /moonbit/... and direct /...
+  let relativePath = pathname;
+  if (pathname === '/moonbit' || pathname === '/moonbit/') {
+    relativePath = '/index.html';
+  } else if (pathname.startsWith('/moonbit/')) {
+    relativePath = pathname.slice('/moonbit'.length);
   }
 
   // Sanitize path to prevent directory traversal
-  const safePath = path.normalize(pathname).replace(/^(\.\.[\/\\])+/, '');
+  const safePath = path.normalize(relativePath).replace(/^(\.\.[\/\\])+/, '');
   const filePath = path.join(WEB_ROOT, safePath);
 
   // Security check: ensure path is within WEB_ROOT
@@ -48,7 +59,6 @@ const server = http.createServer((req, res) => {
     const ext = path.extname(filePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
-    // Development friendly headers (disable caching)
     const headers = {
       'Content-Type': contentType,
       'Content-Length': stats.size,
@@ -65,7 +75,7 @@ server.listen(PORT, () => {
   console.log(`\x1b[32m=====================================================\x1b[0m`);
   console.log(`\x1b[36m   MoonBit WASM Interactive Playground is Running!   \x1b[0m`);
   console.log(`\x1b[32m=====================================================\x1b[0m`);
-  console.log(`\n  Local URL: \x1b[1m\x1b[33mhttp://localhost:${PORT}\x1b[0m\n`);
+  console.log(`\n  Local URL: \x1b[1m\x1b[33mhttp://localhost:${PORT}/moonbit/\x1b[0m\n`);
   console.log(`  Press Ctrl+C to stop the server.\n`);
 });
 
