@@ -1,0 +1,42 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1789924441",
+        "python_version": "3.10.12 (main, Oct  7 2024, 02:27:29) [Clang 16.0.0 (clang-1600.0.26.3)]",
+        "command_line_arguments": "/Users/nagatani/.anyenv/envs/pyenv/versions/3.10.12/bin/mlagents-learn ./creature_config.yaml --run-id=creature-01 --force",
+        "mlagents_version": "1.2.0.dev0",
+        "mlagents_envs_version": "1.2.0.dev0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.8.0",
+        "numpy_version": "1.23.5",
+        "end_time_seconds": "1789924507"
+    },
+    "total": 66.08608141588047,
+    "count": 1,
+    "self": 0.02047041617333889,
+    "children": {
+        "run_training.setup": {
+            "total": 0.021226999815553427,
+            "count": 1,
+            "self": 0.021226999815553427
+        },
+        "TrainerController.start_learning": {
+            "total": 66.04438399989158,
+            "count": 1,
+            "self": 0.0003224997781217098,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 66.04384800000116,
+                    "count": 1,
+                    "self": 66.04384800000116
+                },
+                "TrainerController._save_models": {
+                    "total": 0.00021350011229515076,
+                    "count": 1,
+                    "self": 0.00021350011229515076
+                }
+            }
+        }
+    }
+}
