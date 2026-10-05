@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.unity.ml-agents": "file:/Users/nagatani/unity-projects/ml/ml-agents-release_23_tag/com.unity.ml-agents",
+    "com.unity.ml-agents": "https://github.com/Unity-Technologies/ml-agents.git?path=com.unity.ml-agents#release_23_tag",
     "com.unity.multiplayer.center": "1.0.1",
     "com.unity.modules.accessibility": "1.0.0",
     "com.unity.modules.adaptiveperformance": "1.0.0",
